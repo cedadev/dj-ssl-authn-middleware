@@ -49,7 +49,7 @@ class ApacheSSLAuthnMiddleware(object):
         """
         
         rePathMatchListVal = getattr(settings, self.RE_PATH_MATCH_LIST, [''])
-        self.rePathMatchList = [re.compile(r) for r in rePathMatchListVal.split()]
+        self.rePathMatchList = [re.compile(r) for r in rePathMatchListVal]
     
     def process_request(self, request):
         """Check for peer certificate in environment and if present carry out

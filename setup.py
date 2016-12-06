@@ -26,7 +26,7 @@ except IOError:
     LONG_DESCR = SHORT_DESCR
 
 setup(
-    name='dj_ssl_authn_middleware',
+    name='dj-ssl-authn-middleware',
     version = VERSION,
     author=u'William Tucker',
     author_email='william.tucker@stfc.ac.uk',
