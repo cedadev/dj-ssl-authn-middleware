@@ -40,5 +40,6 @@ setup(
 
     # Adds dependencies    
     install_requires = ['Django',
+                        'pyopenssl',
                         'crypto_cookie'],
 )
