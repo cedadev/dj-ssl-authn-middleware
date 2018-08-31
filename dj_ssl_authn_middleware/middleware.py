@@ -10,11 +10,12 @@ from datetime import datetime
 from OpenSSL import crypto
 
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 
 logger = logging.getLogger(__name__)
 
 
-class ApacheSSLAuthnMiddleware(object):
+class ApacheSSLAuthnMiddleware(MiddlewareMixin):
     """Perform SSL peer certificate authentication making use of Apache
     SSL environment settings
     
@@ -43,10 +44,11 @@ class ApacheSSLAuthnMiddleware(object):
     # Django configuration options
     RE_PATH_MATCH_LIST = 'SSL_AUTHN_RE_PATHS'
     
-    def __init__(self):
+    def __init__(self, *args):
         """Read configuration settings from the global and application specific
         ini file settings
         """
+        super(ApacheSSLAuthnMiddleware, self).__init__(*args)
         
         rePathMatchListVal = getattr(settings, self.RE_PATH_MATCH_LIST, [''])
         self.rePathMatchList = [re.compile(r) for r in rePathMatchListVal]
