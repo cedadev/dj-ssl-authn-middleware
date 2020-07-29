@@ -14,8 +14,6 @@ import os
 
 v_file = open(os.path.join(os.path.dirname(__file__), 
                        'dj_ssl_authn_middleware', '__init__.py'))
-VERSION = re.compile(r".*__version__ = '(.*?)'",
-                     re.S).match(v_file.read()).group(1)
 
 THIS_DIR = os.path.dirname(__file__)
 
@@ -27,7 +25,7 @@ except IOError:
 
 setup(
     name='dj-ssl-authn-middleware',
-    version = VERSION,
+    version = '1.0.0',
     author=u'William Tucker',
     author_email='william.tucker@stfc.ac.uk',
     package_dir = {'dj_ssl_authn_middleware':'dj_ssl_authn_middleware'},
