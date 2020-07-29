@@ -3,7 +3,7 @@ __copyright__ = "Copyright (c) 2014, Science & Technology Facilities Council (ST
 __license__ = "BSD - see LICENSE file in top-level directory"
 
 import re
-import httplib
+import http.client
 import logging
 
 from datetime import datetime
@@ -27,10 +27,10 @@ class ApacheSSLAuthnMiddleware(MiddlewareMixin):
     SSLOptions directive enabled.
     """
     
-    SSL_VALIDATION_KEYNAME = 'SSL_CLIENT_VERIFY'
+    SSL_VALIDATION_KEYNAME = 'X_SSL_CLIENT_VERIFY'
     SSL_VALIDATION_SUCCESS_ID = 'SUCCESS'
     
-    SSL_CLIENT_CERT_KEYNAME = 'SSL_CLIENT_CERT'
+    SSL_CLIENT_CERT_KEYNAME = 'X_SSL_CLIENT_CERT'
     PEM_CERT_PREFIX = '-----BEGIN CERTIFICATE-----'
     
     # isValidCert requires special parsing of certificate when passed via a 
@@ -134,7 +134,7 @@ class ApacheSSLAuthnMiddleware(MiddlewareMixin):
         if start_response is None:
             start_response = self.start_response
             
-        status = '%d %s' % (code, httplib.responses[code])
+        status = '%d %s' % (code, http.client.responses[code])
         if msg is None:
             response = status
         else:
