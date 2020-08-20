@@ -8,6 +8,7 @@ import logging
 
 from datetime import datetime
 from OpenSSL import crypto
+from urllib.parse import unquote
 
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
@@ -27,10 +28,10 @@ class ApacheSSLAuthnMiddleware(MiddlewareMixin):
     SSLOptions directive enabled.
     """
     
-    SSL_VALIDATION_KEYNAME = 'X_SSL_CLIENT_VERIFY'
+    SSL_VALIDATION_KEYNAME = 'HTTP_X_SSL_CLIENT_VERIFY'
     SSL_VALIDATION_SUCCESS_ID = 'SUCCESS'
     
-    SSL_CLIENT_CERT_KEYNAME = 'X_SSL_CLIENT_CERT'
+    SSL_CLIENT_CERT_KEYNAME = 'HTTP_X_SSL_CLIENT_CERT'
     PEM_CERT_PREFIX = '-----BEGIN CERTIFICATE-----'
     
     # isValidCert requires special parsing of certificate when passed via a 
@@ -162,9 +163,12 @@ class ApacheSSLAuthnMiddleware(MiddlewareMixin):
     
     def _isSSLClientCertSet(self, request):
         """Check for SSL Certificate set in environ"""
-        sslClientCert = request.environ.get(
+
+        certificate = request.environ.get(
                         self.SSL_CLIENT_CERT_KEYNAME, '')
-        return sslClientCert.startswith(self.PEM_CERT_PREFIX)
+        certificate = unquote(certificate)
+
+        return certificate.startswith(self.PEM_CERT_PREFIX)
     
     isSSLClientCertSet = property(fget=_isSSLClientCertSet,
                                   doc="Check for client X.509 certificate "
@@ -173,10 +177,12 @@ class ApacheSSLAuthnMiddleware(MiddlewareMixin):
     
     def _parse_cert(self, request):
         '''Parse client certificate from environ'''
-        pem_cert = request.environ[self.SSL_CLIENT_CERT_KEYNAME]
-        cert = crypto.load_certificate(crypto.FILETYPE_PEM, pem_cert)
-        return cert
-    
+
+        certificate = request.environ[self.SSL_CLIENT_CERT_KEYNAME]
+        certificate = unquote(certificate)
+        certificate = crypto.load_certificate(crypto.FILETYPE_PEM, certificate)
+        return certificate
+
     @staticmethod
     def _is_cert_expired(cert):
         '''Check if input certificate has expired
@@ -186,7 +192,7 @@ class ApacheSSLAuthnMiddleware(MiddlewareMixin):
         @rtype: bool
         '''
         notAfter = cert.get_notAfter()
-        dtNotAfter = datetime.strptime(notAfter, '%Y%m%d%H%M%S%fZ')
+        dtNotAfter = datetime.strptime(notAfter.decode(), '%Y%m%d%H%M%S%fZ')
         dtNow = datetime.utcnow()
         
         return dtNotAfter < dtNow
