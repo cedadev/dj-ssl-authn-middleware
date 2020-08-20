@@ -25,7 +25,7 @@ except IOError:
 
 setup(
     name='dj-ssl-authn-middleware',
-    version = '1.0.0',
+    version = '1.0.1',
     author=u'William Tucker',
     author_email='william.tucker@stfc.ac.uk',
     package_dir = {'dj_ssl_authn_middleware':'dj_ssl_authn_middleware'},
